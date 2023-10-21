@@ -1,16 +1,5 @@
 extern crate nalgebra as na;
 
-pub fn vector3init()->na::Vector3<f64>
-{
-    let init = na::Vector3::<f64>::new(
-        0.0,
-        0.0,
-        0.0,
-    );
-
-    init
-}
-
 pub fn p_init(delta_t:f64)->na::Matrix3<f64>
 {
     let dt_pow = delta_t.powi(2);

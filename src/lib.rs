@@ -2,6 +2,7 @@ extern crate nalgebra as na;
 
 pub mod ekf_posture;
 pub mod ekf_pose;
+pub mod between_gps_hubeny;
 
 pub fn get_vector3<T>(x:T, y:T, z:T)->na::Vector3<T>
 {
@@ -12,6 +13,17 @@ pub fn get_vector3<T>(x:T, y:T, z:T)->na::Vector3<T>
     );
 
     m
+}
+
+pub fn vector3init()->na::Vector3<f64>
+{
+    let init = na::Vector3::<f64>::new(
+        0.0,
+        0.0,
+        0.0,
+    );
+
+    init
 }
 
 pub fn identity_matrix()->na::Matrix3<f64>
