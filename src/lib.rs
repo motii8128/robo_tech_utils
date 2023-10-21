@@ -1,7 +1,7 @@
 extern crate nalgebra as na;
 
 pub mod ekf_posture;
-pub mod pose;
+pub mod ekf_pose;
 
 pub fn get_vector3<T>(x:T, y:T, z:T)->na::Vector3<T>
 {
