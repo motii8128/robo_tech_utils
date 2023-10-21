@@ -1,5 +1,3 @@
-use na::{Vector2, Vector3};
-
 extern crate nalgebra as na;
 
 pub fn vector3init()->na::Vector3<f64>
@@ -186,7 +184,7 @@ fn update_obs_res(obs:na::Vector2<f64>, x:na::Vector3<f64>)->na::Vector2<f64>
 {
     let h = get_h();
 
-    let residual:Vector2<f64> = obs - h * x;
+    let residual = obs - h * x;
 
     residual
 }
@@ -215,7 +213,7 @@ fn update_kalman_gain(cov:na::Matrix3<f64>, s:na::Matrix2<f64>)->na::Matrix3x2<f
 
 fn update_x(x:na::Vector3<f64>, residual:na::Vector2<f64>, kalman_gain:na::Matrix3x2<f64>)->na::Vector3<f64>
 {
-    let update_x:Vector3<f64> = x + kalman_gain * residual;
+    let update_x = x + kalman_gain * residual;
 
     update_x
 }
