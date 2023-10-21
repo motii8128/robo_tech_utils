@@ -70,3 +70,42 @@ pub fn get_accel_noise(delta_t:f64)->na::Matrix2<f64>
 
     r
 }
+
+
+fn calc_jacob(x:na::Vector3<f64>, u:na::Vector3<f64>)->na::Matrix3<f64>
+{
+    let roll_cos = (x.x).cos();
+    let roll_sin = (x.x).cos();
+
+    let pitch_cos = (x.y).cos();
+    let pitch_sin = (x.y).sin();
+
+    let f = na::Matrix3::<f64>::new(
+        1.0+u.y*((roll_cos*pitch_sin) / pitch_cos) - u.z*((roll_sin*pitch_sin) / pitch_cos), u.y*(roll_sin / (pitch_cos.powi(2))) + u.z * (roll_cos / (pitch_cos.powi(2))), 0.0,
+        -1.0*u.y*roll_sin - u.z*roll_cos, 1.0, 0.0,
+        u.y*(roll_cos/pitch_cos) - u.z*(roll_sin / pitch_cos), u.y*((roll_sin*pitch_sin) / (pitch_cos.powi(2))) + u.z*((roll_cos*pitch_sin) / (pitch_cos.powi(2))), 1.0
+    );
+
+    f
+}
+
+fn predict_x(x:na::Vector3<f64>, u:na::Vector3<f64>)->na::Vector3<f64>
+{
+    let roll_cos = (x.x).cos();
+    let roll_sin = (x.x).cos();
+
+    let pitch_cos = (x.y).cos();
+    let pitch_sin = (x.y).sin();
+
+    let predict_roll = x.x + u.x + u.y*((roll_sin*pitch_sin) / pitch_cos) + u.z*((roll_cos*pitch_sin) / pitch_cos);
+    let predict_pitch = x.y + u.y*roll_cos - u.z*roll_sin;
+    let predict_yaw = x.z + u.y*(roll_sin / pitch_cos) + u.z*(roll_cos / pitch_cos);
+
+    let predict_x = na::Vector3::<f64>::new(
+        predict_roll,
+        predict_pitch,
+        predict_yaw,
+    );
+
+    predict_x
+}
