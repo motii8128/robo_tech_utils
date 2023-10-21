@@ -16,11 +16,11 @@ pub fn get_vector3<T>(x:T, y:T, z:T)->na::Vector3<T>
 
 pub fn identity_matrix()->na::Matrix3<f64>
 {
-    let h = na::Matrix3::<f64>::new(
+    let i = na::Matrix3::<f64>::new(
         1.0, 0.0, 0.0, 
         0.0, 1.0, 0.0, 
         0.0, 0.0, 1.0,
     );
 
-    h
+    i
 }
