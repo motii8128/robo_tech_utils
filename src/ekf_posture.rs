@@ -1,3 +1,5 @@
+use na::Vector2;
+
 extern crate nalgebra as na;
 
 pub fn vector3init()->na::Vector3<f64>
@@ -127,3 +129,23 @@ fn predict_cov_transition(p:na::Matrix3<f64>, jacob_f:na::Matrix3<f64>, gyro_noi
 
     predict_cov
 }
+
+fn update_obs_res(obs:na::Vector2<f64>, x:na::Vector3<f64>)->na::Vector2<f64>
+{
+    let h = get_h();
+
+    let residual:Vector2<f64> = obs - h * x;
+
+    residual
+}
+
+fn update_s(cov:na::Matrix3<f64>, accel_noise:na::Matrix2<f64>)->na::Matrix2<f64>
+{
+    let h = get_h();
+    let trans_h = h.transpose();
+
+    let s = h * cov * trans_h + accel_noise;
+
+    s
+}
+
