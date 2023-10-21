@@ -1,4 +1,4 @@
-use na::Vector2;
+use na::{Vector2, Vector3};
 
 extern crate nalgebra as na;
 
@@ -71,6 +71,58 @@ pub fn get_accel_noise(delta_t:f64)->na::Matrix2<f64>
     );
 
     r
+}
+
+pub fn ekf_x(
+    x:na::Vector3<f64>,
+    input_m:na::Vector3<f64>,
+    obs:na::Vector2<f64>,
+    cov:na::Matrix3<f64>,
+    accel_noise:na::Matrix2<f64>,
+    gyro_noise:na::Matrix3<f64>,
+)->na::Vector3<f64>
+{
+    // predict
+    let f = calc_jacob(x, input_m);
+
+    let predict_x = predict_x(x, input_m);
+
+    let predict_cov = predict_cov_transition(cov, f, gyro_noise);
+
+
+    // update
+    let y_res = update_obs_res(obs, predict_x);
+
+    let s = update_s(predict_cov, accel_noise);
+
+    let kalman_gain = update_kalman_gain(predict_cov, s);
+
+    let update_x = update_x(predict_x, y_res, kalman_gain);
+
+    update_x
+}
+
+pub fn ekf_cov(
+    x:na::Vector3<f64>,
+    input_m:na::Vector3<f64>,
+    cov:na::Matrix3<f64>,
+    accel_noise:na::Matrix2<f64>,
+    gyro_noise:na::Matrix3<f64>,
+)->na::Matrix3<f64>
+{
+    // predict
+    let f = calc_jacob(x, input_m);
+
+    let predict_cov = predict_cov_transition(cov, f, gyro_noise);
+
+    // update
+    let s = update_s(predict_cov, accel_noise);
+
+    let kalman_gain = update_kalman_gain(predict_cov, s);
+
+    let update_cov = update_cov_transition(predict_cov, kalman_gain);
+
+    update_cov
 }
 
 
@@ -149,3 +201,36 @@ fn update_s(cov:na::Matrix3<f64>, accel_noise:na::Matrix2<f64>)->na::Matrix2<f64
     s
 }
 
+fn update_kalman_gain(cov:na::Matrix3<f64>, s:na::Matrix2<f64>)->na::Matrix3x2<f64>
+{
+    let h = get_h();
+    let trans_h = h.transpose();
+
+    let inverse_s = s.try_inverse().unwrap();
+
+    let kalman_gain = cov * trans_h * inverse_s;
+
+    kalman_gain
+}
+
+fn update_x(x:na::Vector3<f64>, residual:na::Vector2<f64>, kalman_gain:na::Matrix3x2<f64>)->na::Vector3<f64>
+{
+    let update_x:Vector3<f64> = x + kalman_gain * residual;
+
+    update_x
+}
+
+fn update_cov_transition(cov:na::Matrix3<f64>, kalman_gain:na::Matrix3x2<f64>)->na::Matrix3<f64>
+{
+    let i = na::Matrix3::<f64>::new(
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+    );
+
+    let h = get_h();
+
+    let update_cov = (i - kalman_gain*h) * cov;
+
+    update_cov
+}
