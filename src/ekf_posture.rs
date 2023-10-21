@@ -109,3 +109,21 @@ fn predict_x(x:na::Vector3<f64>, u:na::Vector3<f64>)->na::Vector3<f64>
 
     predict_x
 }
+
+fn get_h()->na::Matrix2x3<f64>
+{
+    let h = na::Matrix2x3::<f64>::new(
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+    );
+
+    h
+}
+
+fn predict_cov_transition(p:na::Matrix3<f64>, jacob_f:na::Matrix3<f64>, gyro_noise:na::Matrix3<f64>)->na::Matrix3<f64>
+{
+    let trans_jacob = jacob_f.transpose();
+    let predict_cov = jacob_f * p * trans_jacob + gyro_noise;
+
+    predict_cov
+}
