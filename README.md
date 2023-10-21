@@ -8,5 +8,5 @@ Extended kalman filter, hubeny, math localization utils by Rust
 
 # To do 
 - [ ] pose extended kalman filter from imu
-- [ ] posture extended kalman filter from imu
+- [x] posture extended kalman filter from imu
 - [ ] calc hubeny
