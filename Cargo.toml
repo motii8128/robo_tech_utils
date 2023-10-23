@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 nalgebra = "0.32.3"
+safe_drive = "0.3.5"
+
+[package.metadata.ros]
+safe_drive_version = "0.3.5"
