@@ -1,7 +1,7 @@
 extern crate nalgebra as na;
 
 pub mod localization;
-pub mod sensing;
+pub mod navigation;
 
 pub fn get_vector3<T>(x:T, y:T, z:T)->na::Vector3<T>
 {
