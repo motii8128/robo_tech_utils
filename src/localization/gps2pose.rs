@@ -51,7 +51,7 @@ pub fn get_pose_from_gps(
 }
 
 // get pose from gpsで算出した距離、方向から検算
-pub fn verify_dev(
+pub fn verify(
     base_latitude_deg:f64,
     base_longitude_deg:f64,
     distance:f64, 

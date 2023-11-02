@@ -105,3 +105,34 @@ pub async fn async_twist_to_pose(
         t_a = t_b;
     }
 }
+
+pub async fn async_twist_to_accel(
+    mut subscriber:Subscriber<geometry_msgs::msg::Twist>,
+    publisher:Publisher<geometry_msgs::msg::Accel>,
+)->Result<(), DynError>
+{
+    let log = Logger::new(subscriber.get_topic_name());
+    let mut clock = Clock::new().unwrap();
+    let mut t_a = clock.get_now().unwrap() as f64;
+    let mut old_vel = geometry_msgs::msg::Twist::new().unwrap();
+    let mut send_msg = geometry_msgs::msg::Accel::new().unwrap();
+
+    loop
+    {
+        let msg = subscriber.recv().await?;
+        let t_b = clock.get_now().unwrap() as f64;
+        let delta_t= (t_b - t_a)*10e-10;
+        send_msg.linear.x = (msg.linear.x - old_vel.linear.x) / delta_t;
+        send_msg.linear.y = (msg.linear.y - old_vel.linear.y) / delta_t;
+        send_msg.linear.z = (msg.linear.z - old_vel.linear.z) / delta_t;
+
+        let _ = publisher.send(&send_msg)?;
+        pr_info!(log, "calc linear_x:{}, linear_y:{}, linear_z:{}", send_msg.linear.x, send_msg.linear.y, send_msg.linear.z);
+
+        old_vel.linear.x = msg.linear.x;
+        old_vel.linear.y = msg.linear.y;
+        old_vel.linear.z = msg.linear.z;
+
+        t_a = t_b;
+    }
+}
