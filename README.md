@@ -1,5 +1,6 @@
-# rust_robo_utils
-Autonomous system function by Rust
+![icon](https://github.com/motii8128/rust_robo_utils/assets/108280115/1f853418-bc8b-41f0-8a8f-4946d006c1d5)
+
+function for autonomous system by Rust
 
 # build test
 | test | status |
