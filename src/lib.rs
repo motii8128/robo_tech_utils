@@ -70,3 +70,28 @@ pub fn quaternion_to_euler_xyz(quaternion:na::Vector4<f64>)->na::Vector3<f64>
 
     vec
 }
+
+pub fn quaternion_to_euler_xzy(quaternion:na::Vector4<f64>)->na::Vector3<f64>
+{
+    let q_x = quaternion.x;
+
+    let q_y = quaternion.y;
+
+    let q_z = quaternion.z;
+
+    let q_w = quaternion.w;
+
+    let theta_x = (2.0 * q_y * q_z + 2.0 * q_x * q_w) / (2.0 * (q_w.powi(2)) + 2.0 * (q_y.powi(2)) - 1.0);
+
+    let theta_y = -1.0 * ((2.0 + q_y * q_z - 2.0 * q_x * q_w) / (2.0 * q_w.powi(2) + 2.0 * q_z.powi(2) - 1.0));
+
+    let theta_z = -1.0 * (2.0 * q_x * q_y - 2.0 * q_z * q_w);
+
+    let vec = na::Vector3::<f64>::new(
+        theta_x.atan(),
+        theta_y.atan(),
+        theta_z.asin(),
+    );
+
+    vec
+}
