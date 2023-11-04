@@ -73,11 +73,11 @@ pub fn get_accel_noise(delta_t:f64)->na::Matrix2<f64>
 
 pub fn ekf_x(
     x:na::Vector3<f64>,
-    input_m:na::Vector3<f64>,
-    obs:na::Vector2<f64>,
-    cov:na::Matrix3<f64>,
-    accel_noise:na::Matrix2<f64>,
-    gyro_noise:na::Matrix3<f64>,
+    u:na::Vector3<f64>,
+    z:na::Vector2<f64>,
+    p:na::Matrix3<f64>,
+    q:na::Matrix2<f64>,
+    r:na::Matrix3<f64>,
 )->na::Vector3<f64>
 {
     // predict
