@@ -76,8 +76,8 @@ pub fn ekf_x(
     input_m:na::Vector3<f64>,
     obs:na::Vector2<f64>,
     cov:na::Matrix3<f64>,
-    gyro_noise:na::Matrix2<f64>,
-    accel_noise:na::Matrix3<f64>,
+    accel_noise:na::Matrix2<f64>,
+    gyro_noise:na::Matrix3<f64>,
 )->na::Vector3<f64>
 {
     // predict
