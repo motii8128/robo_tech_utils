@@ -1,6 +1,6 @@
 extern crate nalgebra as na;
 
-use safe_drive::msg::common_interfaces::sensor_msgs;
+use safe_drive::msg::common_interfaces::{sensor_msgs, geometry_msgs::msg::Point32};
 
 pub fn icp_matching(
     previous_point:sensor_msgs::msg::PointCloud,
@@ -20,7 +20,9 @@ pub fn icp_matching(
     }
 }
 
-pub fn update_homo_matrix()
+pub fn nearest_neighbor_association(
+    previous_point: &Point32, 
+    current_point: &Point32
+)
 {
-    
 }
