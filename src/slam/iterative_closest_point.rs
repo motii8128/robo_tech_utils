@@ -21,8 +21,13 @@ pub fn icp_matching(
 }
 
 pub fn nearest_neighbor_association(
-    previous_point: &Point32, 
-    current_point: &Point32
+    previous_point: &[Point32], 
+    current_point: &[Point32]
 )
 {
+    let mut delta_point 
+    for i in 0..previous_point.len()
+    {
+        let 
+    }
 }
