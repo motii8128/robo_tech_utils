@@ -2,7 +2,7 @@ use safe_drive::msg::common_interfaces::geometry_msgs::msg::Point32;
 
 
 
-pub fn nearest_neighbor_association(
+pub fn nearest_neighbor_association_err(
     previous_point: &[Point32], 
     current_point: &[Point32]
 )->f32
@@ -37,4 +37,26 @@ pub fn nearest_neighbor_association(
     let error = d;
 
     error
+}
+
+pub fn nearest_neighbor_association_index(
+    previous_point: &[Point32], 
+    current_point: &[Point32]
+)
+{
+    let mut curr_vec = vec![(
+        current_point.get(0).unwrap().x,
+        current_point.get(0).unwrap().y,
+        current_point.get(0).unwrap().z,
+    )];
+
+    for i in 1..current_point.len()
+    {
+        curr_vec.push((
+            current_point.get(i).unwrap().x,
+            current_point.get(i).unwrap().y,
+            current_point.get(i).unwrap().z,
+        ))
+    }
+
 }
