@@ -1,33 +1,30 @@
-extern crate nalgebra as na;
-
 use safe_drive::msg::common_interfaces::{sensor_msgs, geometry_msgs::msg::Point32};
 
-pub fn icp_matching(
-    previous_point:sensor_msgs::msg::PointCloud,
-    current_point:sensor_msgs::msg::PointCloud,
-    eps:f32, //0.0001
-    max_iter:i32 //100
-)
-{
-    let d_err = std::f32::INFINITY;
 
-    let pre_err = std::f32::INFINITY;
-
-    let count = 0;
-
-    while d_err >= eps {
-        
-    }
-}
 
 pub fn nearest_neighbor_association(
     previous_point: &[Point32], 
     current_point: &[Point32]
 )
 {
-    let mut delta_point 
-    for i in 0..previous_point.len()
+    let mut delta_points = vec![
+        (previous_point.get(0).unwrap().x - current_point.get(0).unwrap().x,
+        previous_point.get(0).unwrap().y - current_point.get(0).unwrap().y,
+        previous_point.get(0).unwrap().z - current_point.get(0).unwrap().z)];
+
+    for i in 1..current_point.len()
     {
-        let 
+        delta_points.push((
+            previous_point.get(i).unwrap().x - current_point.get(i).unwrap().x,
+            previous_point.get(i).unwrap().y - current_point.get(i).unwrap().y,
+            previous_point.get(i).unwrap().z - current_point.get(i).unwrap().z,
+        ))
+    }
+
+    let mut d = 0.0;
+
+    for i in 0..delta_points.len()
+    {
+        
     }
 }
