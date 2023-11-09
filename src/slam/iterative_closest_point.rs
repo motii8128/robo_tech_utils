@@ -1,11 +1,11 @@
-use safe_drive::msg::common_interfaces::{sensor_msgs, geometry_msgs::msg::Point32};
+use safe_drive::msg::common_interfaces::geometry_msgs::msg::Point32;
 
 
 
 pub fn nearest_neighbor_association(
     previous_point: &[Point32], 
     current_point: &[Point32]
-)
+)->f32
 {
     let mut delta_points = vec![
         (previous_point.get(0).unwrap().x - current_point.get(0).unwrap().x,
@@ -25,6 +25,16 @@ pub fn nearest_neighbor_association(
 
     for i in 0..delta_points.len()
     {
-        
+        let vec = na::Vector3::new(
+            delta_points.get(i).unwrap().0,
+            delta_points.get(i).unwrap().1,
+            delta_points.get(i).unwrap().2,
+        );
+
+        d += vec.lp_norm(0)
     }
+
+    let error = d;
+
+    error
 }
