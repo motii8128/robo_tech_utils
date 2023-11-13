@@ -4,10 +4,12 @@ use safe_drive::{
     topic::publisher::Publisher,
     pr_info,
     pr_error,
-    msg::common_interfaces::std_msgs
+    msg::common_interfaces::std_msgs,
+    msg::U8Seq,
 };
 
 use async_net::UdpSocket;
+use std::ptr;
 
 pub async fn udp_reciever(
     addr:&str,
@@ -19,7 +21,7 @@ pub async fn udp_reciever(
 
     let socket = UdpSocket::bind(addr).await?;
 
-    let mut buf = [0; 2048];
+    let mut buf = [0; 1024];
 
     loop {
         match socket.recv_from(&mut buf).await
@@ -32,4 +34,10 @@ pub async fn udp_reciever(
             }
         }
     }
+}
+
+fn deserialize<T:Sized>(buf: &[u8])->T
+{
+    let result_ptr = buf.as_ptr() as *const T;
+    unsafe{ptr::read(result_ptr)}
 }
