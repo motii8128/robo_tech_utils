@@ -3,6 +3,7 @@ use safe_drive::{
     logger::Logger,
     topic::publisher::Publisher,
     pr_info,
+    pr_error,
     msg::common_interfaces::std_msgs
 };
 
@@ -14,6 +15,7 @@ pub async fn udp_reciever(
 )->Result<(), DynError>
 {
     let log = Logger::new(publisher.get_topic_name());
+    pr_info!(log, "Start UDP_reciever({})", publisher.get_topic_name());
 
     let socket = UdpSocket::bind(addr).await?;
 
@@ -26,7 +28,7 @@ pub async fn udp_reciever(
                 
             }
             Err(e)=>{
-
+                pr_error!(log, "{}", e);
             }
         }
     }
