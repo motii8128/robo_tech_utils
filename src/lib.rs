@@ -3,6 +3,7 @@ extern crate nalgebra as na;
 pub mod localization;
 pub mod navigation;
 pub mod slam;
+pub mod connector;
 
 pub fn get_vector3<T>(x:T, y:T, z:T)->na::Vector3<T>
 {
