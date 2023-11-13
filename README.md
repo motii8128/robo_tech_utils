@@ -9,6 +9,8 @@
 |cargo|1.73.0|
 |nalgebra|0.32.3|
 |safe_drive|0.3.5|
+|async-net|2.0.0|
+|serde|1.0.0|
 
 # To do
 - [ ] pose extended kalman filter from imu
@@ -21,3 +23,4 @@
 - [ ] motion_planning
 - [ ] path_planning
 - [ ] goal_publisher?
+- [ ] UDP connector
