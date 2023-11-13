@@ -10,6 +10,13 @@ use safe_drive::{
 
 use async_net::UdpSocket;
 use std::ptr;
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize)]
+struct Msg
+{
+    data:f32
+}
 
 pub async fn udp_reciever(
     addr:&str,
@@ -24,14 +31,9 @@ pub async fn udp_reciever(
     let mut buf = [0; 1024];
 
     loop {
-        match socket.recv_from(&mut buf).await
+        if let Ok((size, src)) = socket.recv_from(&mut buf).await
         {
-            Ok((data, rcv_addr))=>{
-                
-            }
-            Err(e)=>{
-                pr_error!(log, "{}", e);
-            }
+            let data:Result<Msg, _> = serde_json::from_slice(&buf[..size]);
         }
     }
 }
