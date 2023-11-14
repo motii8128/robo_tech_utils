@@ -1,15 +1,13 @@
 use safe_drive::{
     error::DynError,
     logger::Logger,
-    topic::publisher::Publisher,
+    topic::{publisher::Publisher, subscriber::Subscriber},
     pr_info,
     pr_error,
     msg::common_interfaces::std_msgs,
-    msg::U8Seq,
 };
 
 use async_net::UdpSocket;
-use std::ptr;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize)]
@@ -20,11 +18,11 @@ struct Msg
 
 pub async fn udp_reciever(
     addr:&str,
-    mut publisher:Publisher<std_msgs::msg::Float32>,
+    publisher:Publisher<std_msgs::msg::Float32>,
 )->Result<(), DynError>
 {
     let log = Logger::new(publisher.get_topic_name());
-    pr_info!(log, "Start UDP_reciever({})", publisher.get_topic_name());
+    pr_info!(log, "Start UDP reciever({})", publisher.get_topic_name());
 
     let socket = UdpSocket::bind(addr).await?;
 
@@ -34,12 +32,43 @@ pub async fn udp_reciever(
         if let Ok((size, src)) = socket.recv_from(&mut buf).await
         {
             let data:Result<Msg, _> = serde_json::from_slice(&buf[..size]);
+
+            match data {
+                Ok(desialized_data)=>
+                {
+                    let mut msg = std_msgs::msg::Float32::new().unwrap();
+
+                    msg.data = desialized_data.data;
+
+                    let _ = publisher.send(&msg);
+                }
+                Err(e)=>
+                {
+                    pr_error!(log, "{} error : {}", src, e);
+                }
+            }
         }
     }
 }
 
-fn deserialize<T:Sized>(buf: &[u8])->T
+pub async fn udp_sender(
+    sender_addr:&str,
+    reciever_addr:&str,
+    mut subscriber:Subscriber<std_msgs::msg::Float32>,
+)->Result<(), DynError>
 {
-    let result_ptr = buf.as_ptr() as *const T;
-    unsafe{ptr::read(result_ptr)}
+    let log = Logger::new(subscriber.get_topic_name());
+    pr_info!(log, "Start UDP sender({})", subscriber.get_topic_name());
+
+    let socket = UdpSocket::bind(sender_addr).await?;
+
+    loop {
+        let msg = subscriber.recv().await?;
+
+        let send_data = Msg{data : msg.data};
+
+        let serialized_data = serde_json::to_string(&send_data).unwrap();
+
+        socket.send_to(serialized_data.as_bytes(), reciever_addr).await?;
+    }
 }
