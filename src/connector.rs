@@ -7,8 +7,12 @@ use safe_drive::{
     msg::common_interfaces::std_msgs,
 };
 
+use async_std::channel;
+use async_std::prelude::*;
 use async_net::UdpSocket;
 use serde::{Deserialize, Serialize};
+use signal_hook::consts::signal::*;
+use signal_hook_async_std::Signals;
 
 #[derive(Deserialize, Serialize)]
 struct Msg
@@ -18,6 +22,7 @@ struct Msg
 
 pub async fn udp_reciever(
     addr:&str,
+    closer: channel::Receiver<bool>,
     publisher:Publisher<std_msgs::msg::Float32>,
 )->Result<(), DynError>
 {
@@ -47,6 +52,11 @@ pub async fn udp_reciever(
                     pr_error!(log, "{} error : {}", src, e);
                 }
             }
+
+            if closer.try_recv() == Ok(true) {
+                pr_info!(log, "UDP servise shutdown");
+                return Ok(());
+            }
         }
     }
 }
@@ -54,6 +64,7 @@ pub async fn udp_reciever(
 pub async fn udp_sender(
     sender_addr:&str,
     reciever_addr:&str,
+    closer: channel::Receiver<bool>,
     mut subscriber:Subscriber<std_msgs::msg::Float32>,
 )->Result<(), DynError>
 {
@@ -70,5 +81,33 @@ pub async fn udp_sender(
         let serialized_data = serde_json::to_string(&send_data).unwrap();
 
         socket.send_to(serialized_data.as_bytes(), reciever_addr).await?;
+
+        if closer.try_recv() == Ok(true) {
+            pr_info!(log, "UDP servise shutdown");
+            return Ok(());
+        }
+    }
+}
+
+pub async fn get_signal(closer: channel::Sender<bool>) -> Result<(), DynError> {
+    let signals = Signals::new(&[SIGHUP, SIGTERM, SIGINT, SIGQUIT])?;
+    let mut signals = signals.fuse();
+    loop {
+        if let Some(signal) = signals.next().await {
+            match signal {
+                SIGTERM | SIGINT | SIGQUIT => {
+                    // Shutdown the system;
+                    closer.send(true).await?;
+                    closer.send(true).await?;
+                    closer.send(true).await?;
+                    async_std::task::sleep(std::time::Duration::from_millis(100)).await;
+                    closer.send(true).await?;
+                    closer.send(true).await?;
+                    closer.send(true).await?;
+                    return Ok(());
+                }
+                _ => unreachable!(),
+            }
+        }
     }
 }
