@@ -18,7 +18,7 @@ use crate::connector::udp_msgs;
 
 
 pub async fn udp_f32_reciever(
-    addr:&str,
+    addr:String,
     closer: channel::Receiver<bool>,
     publisher:Publisher<std_msgs::msg::Float32>,
 )->Result<(), DynError>
@@ -59,8 +59,8 @@ pub async fn udp_f32_reciever(
 }
 
 pub async fn udp_f32_sender(
-    sender_addr:&str,
-    reciever_addr:&str,
+    sender_addr:String,
+    reciever_addr:String,
     closer: channel::Receiver<bool>,
     mut subscriber:Subscriber<std_msgs::msg::Float32>,
 )->Result<(), DynError>
@@ -77,7 +77,7 @@ pub async fn udp_f32_sender(
 
         let serialized_data = serde_json::to_string(&send_data).unwrap();
 
-        socket.send_to(serialized_data.as_bytes(), reciever_addr).await?;
+        socket.send_to(serialized_data.as_bytes(), reciever_addr.as_str()).await?;
 
         if closer.try_recv() == Ok(true) {
             pr_info!(log, "UDP servise shutdown");
@@ -87,7 +87,7 @@ pub async fn udp_f32_sender(
 }
 
 pub async fn udp_twist_reciever(
-    addr:&str,
+    addr:String,
     closer: channel::Receiver<bool>,
     publisher:Publisher<geometry_msgs::msg::Twist>,
 )->Result<(), DynError>
@@ -133,8 +133,8 @@ pub async fn udp_twist_reciever(
 }
 
 pub async fn udp_twist_sender(
-    sender_addr:&str,
-    reciever_addr:&str,
+    sender_addr:String,
+    reciever_addr:String,
     closer: channel::Receiver<bool>,
     mut subscriber:Subscriber<geometry_msgs::msg::Twist>,
 )->Result<(), DynError>
@@ -166,7 +166,7 @@ pub async fn udp_twist_sender(
 
         let serialized_data = serde_json::to_string(&send_data).unwrap();
 
-        socket.send_to(serialized_data.as_bytes(), reciever_addr).await?;
+        socket.send_to(serialized_data.as_bytes(), reciever_addr.as_str()).await?;
 
         if closer.try_recv() == Ok(true) {
             pr_info!(log, "UDP servise shutdown");

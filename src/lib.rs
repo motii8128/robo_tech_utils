@@ -97,3 +97,4 @@ pub fn quaternion_to_euler_xzy(quaternion:na::Vector4<f64>)->na::Vector3<f64>
 
     vec
 }
+
